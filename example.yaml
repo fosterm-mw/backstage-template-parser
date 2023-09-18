@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Backstage-Template
+metadata:
+  name: test-resource
+spec:
+  bucket:
+    name: devops-bucket
+    deletionPolicy: Delete
+    project: devops-infra
+    location: US
+    storageClass: STANDARD
