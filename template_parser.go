@@ -43,15 +43,28 @@ func readFileLineAsString(filePath string, lineNumber int) (string, error) {
   return "", fmt.Errorf("File %s does not have line number: %d", filePath, lineNumber)
 }
 
-func writeLineToFile(newFileName string, line string) error {
+func createNewFile(newFileName string) error {
   filename := newFileName
 
-  file, err := os.Create(filename)
+  _, err := os.Create(filename)
   if err != nil {
     fmt.Errorf("Failed to create file: %v", err)
   }
 
+  return nil
+}
+
+func writeLineToFile(filePath string, line string) error {
+  file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+  if err != nil {
+    fmt.Errorf("Failed to open file to append: %v", err)
+  }
+  line = line + "\n"
+
   _, err = file.WriteString(line)
+  if err != nil {
+    fmt.Errorf("Failed to write to file: %v", err)
+  }
   defer file.Close()
 
   return nil
