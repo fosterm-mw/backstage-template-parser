@@ -1,5 +1,4 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
+kind: Test
 metadata:
   name: gcp-template
   title: GCP Template

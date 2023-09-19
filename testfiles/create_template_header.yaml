@@ -1,8 +1,6 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
-# metadata:
-#   name: gcp-template
-  # title: GCP Template
-  # description: Create GCP Resources
-  # tags:
-  #   - group1
+metadata:
+  name: gcp-template
+  title: GCP Template
+  description: Create GCP Resources

@@ -105,36 +105,12 @@ func TestCanNotParseNoMetadata (t *testing.T) {
 }
 
 func TestCreateTemplateHeader (t *testing.T) {
-  // read in the header.yaml file
-
-
-  // write to test.yaml
   testFileName := "test2.yaml"
-  generatorFileName := "testfiles/create_template_header.yaml"
-  initTemplateFile(testFileName)
-  // writeMetadataToTemplateFile(testFileName, generatorFileName)
-  assertFileEquals(testFileName, generatorFileName, t)
-
-  //all templates have the same
-  //apiVersion
-  //Kind
-  //templates will then look for the metadata
-  //check metadata and store name
-  //store namespace
+  matchFileName := "testfiles/create_template_header.yaml"
+  generatorFileName := "examples/init_file.yaml"
+  initTemplateFile(testFileName, generatorFileName)
+  assertFileEquals(testFileName, matchFileName, t)
   //store any annotations
   //store any labels
-  //store title
-  // store description
 }
-// func TestConvertValuesToTemplate (t *testing.T){
-//
-// }
-
-// func TestCreateTemplateWithApiVersion (t *testing.T) {
-//   template := Template{}
-// }
-
-// func TestWriteTemplateToFile (t *testing.T) {
-//
-// }
 

@@ -72,12 +72,25 @@ func writeLineToFile(filePath string, line string) error {
   return nil
 }
 
-func initTemplateFile(filePath string) {
+func initTemplateFile(filePath string, generatorFileName string) {
   apiVersion := "apiVersion: scaffolder.backstage.io/v1beta3"
   kind := "kind: Template"
   createNewFile(filePath)
   writeLineToFile(filePath, apiVersion)
   writeLineToFile(filePath, kind)
+
+  metadata, err := parseMetadata(generatorFileName)
+  if err != nil {
+    fmt.Errorf("Failed to pase Metadata: %v", err)
+  }
+  writeMetadata(filePath, metadata)
+}
+
+func writeMetadata(filePath string, metadata TemplateMetadata) {
+  writeLineToFile(filePath, "metadata:")
+  writeLineToFile(filePath, fmt.Sprintf("  name: %v", metadata.Name))
+  writeLineToFile(filePath, fmt.Sprintf("  title: %v", metadata.Title))
+  writeLineToFile(filePath, fmt.Sprintf("  description: %v", metadata.Description))
 }
 
 func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
@@ -86,7 +99,7 @@ func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
     lineNumber++
     currentLine := scanner.Text()
     if strings.Contains(currentLine, objectName){
-      return lineNumber
+      return lineNumber-1
     }
   }
 
@@ -106,7 +119,6 @@ func parseMetadata(filePath string) (TemplateMetadata, error) {
   for scanner.Scan() {
     lineNumber++
     if lineNumber >= metadataLineNumber{
-      metadataLineNumber++
       currentLine := scanner.Text()
       if strings.Contains(currentLine, "spec:"){
         break
@@ -126,10 +138,6 @@ func parseMetadata(filePath string) (TemplateMetadata, error) {
   defer file.Close()
   return metadata, nil
 }
-
-// func writeMetadataToTemplateFile(initFilePath string, generatorFileName string) {
-//   
-// }
 
 func main() {
   filePath := readFilePath()
