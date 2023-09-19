@@ -84,17 +84,23 @@ func TestWriteApiVersionAndKindToFile (t *testing.T) {
 }
 
 func TestCanParseMetadata (t *testing.T) {
-  // open file
-  // create scanner for file
-  // loop through file until we hit metadata
-  // store metadata correctly in the struct
   want := TemplateMetadata{
     Name: "gcp-template",
+    Title: "GCP Template",
+    Description: "Create GCP Resources",
   }
-  got := parseMetadata("examples/header.yaml")
+  got, err := parseMetadata("examples/header.yaml")
+  checkRead(err, t)
 
   if got != want {
     t.Errorf("Got %v, wanted %v", got, want)
+  }
+}
+
+func TestCanNotParseNoMetadata (t *testing.T) {
+  _, got := parseMetadata("examples/error_header.yaml")
+  if got == nil {
+    t.Errorf("Did not return error for bug.")
   }
 }
 

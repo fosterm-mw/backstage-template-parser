@@ -1,8 +1,10 @@
 metadata:
   name: gcp-template
+  title: GCP Template
+  description: Create GCP Resources
 spec:
-  name: willnoterror
-  # title: GCP Template
-  # description: Create GCP Resources
+  name: devops-bucket
+  deletionPolicy: Delete
+  
   # tags:
   #   - group1

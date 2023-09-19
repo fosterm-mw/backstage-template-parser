@@ -5,6 +5,7 @@ import (
   "bufio"
   "fmt"
   "strings"
+  "errors"
 )
 
 func readFilePath() string {
@@ -79,21 +80,29 @@ func initTemplateFile(filePath string) {
   writeLineToFile(filePath, kind)
 }
 
-func parseMetadata(filePath string) TemplateMetadata {
-  metadata := TemplateMetadata{}
-  file := openFile(filePath)
-  scanner := bufio.NewScanner(file)
+func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
   lineNumber := 0
-  metadataLineNumber := 0
   for scanner.Scan() {
     lineNumber++
     currentLine := scanner.Text()
-    if strings.Contains(currentLine, "metadata"){
-      metadataLineNumber = lineNumber
-      break
+    if strings.Contains(currentLine, objectName){
+      return lineNumber
     }
   }
-  lineNumber = 0
+
+  return -1
+}
+
+func parseMetadata(filePath string) (TemplateMetadata, error) {
+  metadata := TemplateMetadata{}
+  file := openFile(filePath)
+  scanner := bufio.NewScanner(file)
+  metadataLineNumber := getObjectLineNumber(scanner, "metadata")
+  if metadataLineNumber == -1 {
+    error := errors.New("Cannot parse metadata, object not supplied.")
+    return metadata, error
+  }
+  lineNumber := 0
   for scanner.Scan() {
     lineNumber++
     if lineNumber >= metadataLineNumber{
@@ -103,16 +112,19 @@ func parseMetadata(filePath string) TemplateMetadata {
         break
       }
       if strings.Contains(currentLine, "name:"){
-        metadataName := strings.Split(currentLine, ": ")
-        if len(metadataName) > 1{
-          metadata.Name = metadataName[1]
-        }
+        metadata.Name = strings.Split(currentLine, ": ")[1]
+      }
+      if strings.Contains(currentLine, "title:"){
+        metadata.Title = strings.Split(currentLine, ": ")[1]
+      }
+      if strings.Contains(currentLine, "description:"){
+        metadata.Description = strings.Split(currentLine, ": ")[1]
       }
     }
   }
 
   defer file.Close()
-  return metadata
+  return metadata, nil
 }
 
 // func writeMetadataToTemplateFile(initFilePath string, generatorFileName string) {
