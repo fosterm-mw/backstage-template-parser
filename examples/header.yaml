@@ -1,5 +1,7 @@
 metadata:
   name: gcp-template
+spec:
+  name: willnoterror
   # title: GCP Template
   # description: Create GCP Resources
   # tags:

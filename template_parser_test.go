@@ -83,11 +83,31 @@ func TestWriteApiVersionAndKindToFile (t *testing.T) {
   assertFileEquals(testFileName, "testfiles/write_api_version_and_kind_to_file.yaml", t)
 }
 
+func TestCanParseMetadata (t *testing.T) {
+  // open file
+  // create scanner for file
+  // loop through file until we hit metadata
+  // store metadata correctly in the struct
+  want := TemplateMetadata{
+    Name: "gcp-template",
+  }
+  got := parseMetadata("examples/header.yaml")
+
+  if got != want {
+    t.Errorf("Got %v, wanted %v", got, want)
+  }
+}
+
 func TestCreateTemplateHeader (t *testing.T) {
   // read in the header.yaml file
+
+
   // write to test.yaml
-  testFileName := "test.yaml"
-  assertFileEquals(testFileName, "testfiles/create_template_header.yaml", t)
+  testFileName := "test2.yaml"
+  generatorFileName := "testfiles/create_template_header.yaml"
+  initTemplateFile(testFileName)
+  // writeMetadataToTemplateFile(testFileName, generatorFileName)
+  assertFileEquals(testFileName, generatorFileName, t)
 
   //all templates have the same
   //apiVersion

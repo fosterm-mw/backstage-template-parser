@@ -4,6 +4,7 @@ import (
   "os"
   "bufio"
   "fmt"
+  "strings"
 )
 
 func readFilePath() string {
@@ -69,6 +70,54 @@ func writeLineToFile(filePath string, line string) error {
 
   return nil
 }
+
+func initTemplateFile(filePath string) {
+  apiVersion := "apiVersion: scaffolder.backstage.io/v1beta3"
+  kind := "kind: Template"
+  createNewFile(filePath)
+  writeLineToFile(filePath, apiVersion)
+  writeLineToFile(filePath, kind)
+}
+
+func parseMetadata(filePath string) TemplateMetadata {
+  metadata := TemplateMetadata{}
+  file := openFile(filePath)
+  scanner := bufio.NewScanner(file)
+  lineNumber := 0
+  metadataLineNumber := 0
+  for scanner.Scan() {
+    lineNumber++
+    currentLine := scanner.Text()
+    if strings.Contains(currentLine, "metadata"){
+      metadataLineNumber = lineNumber
+      break
+    }
+  }
+  lineNumber = 0
+  for scanner.Scan() {
+    lineNumber++
+    if lineNumber >= metadataLineNumber{
+      metadataLineNumber++
+      currentLine := scanner.Text()
+      if strings.Contains(currentLine, "spec:"){
+        break
+      }
+      if strings.Contains(currentLine, "name:"){
+        metadataName := strings.Split(currentLine, ": ")
+        if len(metadataName) > 1{
+          metadata.Name = metadataName[1]
+        }
+      }
+    }
+  }
+
+  defer file.Close()
+  return metadata
+}
+
+// func writeMetadataToTemplateFile(initFilePath string, generatorFileName string) {
+//   
+// }
 
 func main() {
   filePath := readFilePath()
