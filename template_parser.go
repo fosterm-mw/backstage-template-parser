@@ -83,14 +83,21 @@ func initTemplateFile(filePath string, generatorFileName string) {
   if err != nil {
     fmt.Errorf("Failed to pase Metadata: %v", err)
   }
-  writeMetadata(filePath, metadata)
+  writeMetadata(filePath, *metadata)
 }
 
 func writeMetadata(filePath string, metadata TemplateMetadata) {
   writeLineToFile(filePath, "metadata:")
   writeLineToFile(filePath, fmt.Sprintf("  name: %v", metadata.Name))
-  writeLineToFile(filePath, fmt.Sprintf("  title: %v", metadata.Title))
-  writeLineToFile(filePath, fmt.Sprintf("  description: %v", metadata.Description))
+  if metadata.Title != "" {
+    writeLineToFile(filePath, fmt.Sprintf("  title: %v", metadata.Title))
+  }
+  if metadata.Description != "" {
+    writeLineToFile(filePath, fmt.Sprintf("  description: %v", metadata.Description))
+  }
+  if metadata.Owner != "" {
+    writeLineToFile(filePath, fmt.Sprintf("  owner: %v", metadata.Owner))
+  }
 }
 
 func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
@@ -106,14 +113,14 @@ func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
   return -1
 }
 
-func parseMetadata(filePath string) (TemplateMetadata, error) {
+func parseMetadata(filePath string) (*TemplateMetadata, error) {
   metadata := TemplateMetadata{}
   file := openFile(filePath)
   scanner := bufio.NewScanner(file)
   metadataLineNumber := getObjectLineNumber(scanner, "metadata")
   if metadataLineNumber == -1 {
     error := errors.New("Cannot parse metadata, object not supplied.")
-    return metadata, error
+    return nil, error
   }
   lineNumber := 0
   for scanner.Scan() {
@@ -132,11 +139,18 @@ func parseMetadata(filePath string) (TemplateMetadata, error) {
       if strings.Contains(currentLine, "description:"){
         metadata.Description = strings.Split(currentLine, ": ")[1]
       }
+      if strings.Contains(currentLine, "owner:"){
+        metadata.Owner = strings.Split(currentLine, ": ")[1]
+      }
     }
+  }
+  if metadata.Name == "" {
+    error := errors.New("Cannot parse metadata, name required.")
+    return nil, error
   }
 
   defer file.Close()
-  return metadata, nil
+  return &metadata, nil
 }
 
 func main() {

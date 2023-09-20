@@ -2,6 +2,7 @@ metadata:
   name: gcp-template
   title: GCP Template
   description: Create GCP Resources
+  owner: team1
 spec:
   name: devops-bucket
   deletionPolicy: Delete

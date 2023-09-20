@@ -21,6 +21,14 @@ func checkRead(err error, t *testing.T) {
 }
 
 func assertFileEquals(got string, want string, t *testing.T) bool {
+  gotFileLen, err := os.Stat(got)
+  checkRead(err, t)
+  wantFileLen, err := os.Stat(want)
+  checkRead(err, t)
+  if gotFileLen.Size() != wantFileLen.Size() {
+    t.Errorf("Files are not the same size.")
+  }
+
   gotFile, err := os.Open(got)
   checkRead(err, t)
   wantFile, err := os.Open(want)
@@ -88,9 +96,11 @@ func TestCanParseMetadata (t *testing.T) {
     Name: "gcp-template",
     Title: "GCP Template",
     Description: "Create GCP Resources",
+    Owner: "team1",
   }
-  got, err := parseMetadata("examples/header.yaml")
+  metadata, err := parseMetadata("examples/header.yaml")
   checkRead(err, t)
+  got := *metadata
 
   if got != want {
     t.Errorf("Got %v, wanted %v", got, want)
@@ -110,7 +120,11 @@ func TestCreateTemplateHeader (t *testing.T) {
   generatorFileName := "examples/init_file.yaml"
   initTemplateFile(testFileName, generatorFileName)
   assertFileEquals(testFileName, matchFileName, t)
-  //store any annotations
-  //store any labels
 }
+
+// func TestCreateTemplateWithNoObjects (t *testing.T) {
+//   testFileName := "test3.yaml"
+//   matchFileName := "testfiles/create_template_with_no_objects.yaml"
+//   generatorFileName := "examples/no_objects.yaml"
+// }
 
