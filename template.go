@@ -7,6 +7,10 @@ type TemplateMetadata struct {
   Description string
   Owner string
 }
+
+type TemplateSpec struct {
+  Owner string
+}
 //
 // type Template struct {
 //

@@ -79,11 +79,14 @@ func initTemplateFile(filePath string, generatorFileName string) {
   writeLineToFile(filePath, apiVersion)
   writeLineToFile(filePath, kind)
 
-  metadata, err := parseMetadata(generatorFileName)
+  metadata := TemplateMetadata{}
+  spec := TemplateSpec{}
+  err := parseMetadata(generatorFileName, &metadata, &spec)
   if err != nil {
     fmt.Errorf("Failed to pase Metadata: %v", err)
   }
-  writeMetadata(filePath, *metadata)
+  writeMetadata(filePath, metadata)
+  writeSpec(filePath, spec)
 }
 
 func writeMetadata(filePath string, metadata TemplateMetadata) {
@@ -95,8 +98,12 @@ func writeMetadata(filePath string, metadata TemplateMetadata) {
   if metadata.Description != "" {
     writeLineToFile(filePath, fmt.Sprintf("  description: %v", metadata.Description))
   }
-  if metadata.Owner != "" {
-    writeLineToFile(filePath, fmt.Sprintf("  owner: %v", metadata.Owner))
+}
+
+func writeSpec(filePath string, spec TemplateSpec) {
+  writeLineToFile(filePath, "spec:")
+  if spec.Owner != "" {
+    writeLineToFile(filePath, fmt.Sprintf("  owner: %v", spec.Owner))
   }
 }
 
@@ -113,14 +120,15 @@ func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
   return -1
 }
 
-func parseMetadata(filePath string) (*TemplateMetadata, error) {
+func parseMetadata(filePath string, metadataPointer *TemplateMetadata, specPointer *TemplateSpec) error {
   metadata := TemplateMetadata{}
+  spec := TemplateSpec{}
   file := openFile(filePath)
   scanner := bufio.NewScanner(file)
   metadataLineNumber := getObjectLineNumber(scanner, "metadata")
   if metadataLineNumber == -1 {
     error := errors.New("Cannot parse metadata, object not supplied.")
-    return nil, error
+    return error
   }
   lineNumber := 0
   for scanner.Scan() {
@@ -140,17 +148,19 @@ func parseMetadata(filePath string) (*TemplateMetadata, error) {
         metadata.Description = strings.Split(currentLine, ": ")[1]
       }
       if strings.Contains(currentLine, "owner:"){
-        metadata.Owner = strings.Split(currentLine, ": ")[1]
+        spec.Owner = strings.Split(currentLine, ": ")[1]
       }
     }
   }
   if metadata.Name == "" {
     error := errors.New("Cannot parse metadata, name required.")
-    return nil, error
+    return error
   }
+  *metadataPointer = metadata
+  *specPointer = spec
 
   defer file.Close()
-  return &metadata, nil
+  return nil
 }
 
 func main() {

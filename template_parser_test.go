@@ -92,39 +92,57 @@ func TestWriteApiVersionAndKindToFile (t *testing.T) {
 }
 
 func TestCanParseMetadata (t *testing.T) {
-  want := TemplateMetadata{
+  wantMetadata := TemplateMetadata{
     Name: "gcp-template",
     Title: "GCP Template",
     Description: "Create GCP Resources",
+  }
+  wantSpec := TemplateSpec{
     Owner: "team1",
   }
-  metadata, err := parseMetadata("examples/header.yaml")
+  metadata := TemplateMetadata{}
+  spec := TemplateSpec{}
+  err := parseMetadata("examples/header.yaml", &metadata, &spec)
   checkRead(err, t)
-  got := *metadata
+  gotMetadata := metadata
+  gotSpec := spec
 
-  if got != want {
-    t.Errorf("Got %v, wanted %v", got, want)
+  if gotMetadata != wantMetadata {
+    t.Errorf("Got %v, wanted %v", gotMetadata, wantMetadata)
+  }
+  if gotSpec != wantSpec {
+    t.Errorf("Got %v, wanted %v", gotSpec, wantSpec)
   }
 }
 
 func TestCanNotParseNoMetadata (t *testing.T) {
-  _, got := parseMetadata("examples/error_header.yaml")
+  metadata := TemplateMetadata{}
+  got := parseMetadata("examples/error_header.yaml", &metadata, &TemplateSpec{})
   if got == nil {
     t.Errorf("Did not return error for bug.")
   }
 }
 
 func TestCreateTemplateHeader (t *testing.T) {
-  testFileName := "test2.yaml"
+  testFileName := "test1.yaml"
   matchFileName := "testfiles/create_template_header.yaml"
   generatorFileName := "examples/init_file.yaml"
   initTemplateFile(testFileName, generatorFileName)
   assertFileEquals(testFileName, matchFileName, t)
 }
 
-// func TestCreateTemplateWithNoObjects (t *testing.T) {
-//   testFileName := "test3.yaml"
-//   matchFileName := "testfiles/create_template_with_no_objects.yaml"
-//   generatorFileName := "examples/no_objects.yaml"
-// }
+func TestCanCreateSpec (t *testing.T) {
+  spec := TemplateSpec{}
+  if &spec == nil {
+    t.Errorf("Did not create spec struct")
+  }
+}
+
+func TestCreateTemplateWithNoObjects (t *testing.T) {
+  testFileName := "test3.yaml"
+  matchFileName := "testfiles/create_template_with_no_objects.yaml"
+  generatorFileName := "examples/no_objects.yaml"
+  initTemplateFile(testFileName, generatorFileName)
+  assertFileEquals(testFileName, matchFileName, t)
+}
 
