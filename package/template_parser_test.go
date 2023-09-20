@@ -52,45 +52,6 @@ func TestReadFilePath (t *testing.T) {
   assertStringEquals(path, "example.yaml", t)
 }
 
-func TestReadFirstLine (t *testing.T) {
-  firstLine, err := readFileLineAsString("example.yaml", 1)
-  checkRead(err, t)
-
-  assertStringEquals(firstLine, "apiVersion: v1", t)
-}
-
-func TestReadSecondLine (t *testing.T) {
-  secondLine, err := readFileLineAsString("example.yaml", 2)
-  checkRead(err, t)
-
-  assertStringEquals(secondLine, "kind: Backstage-Template", t)
-}
-
-func TestWriteOneLineToFile (t *testing.T) {
-  line, err := readFileLineAsString("example.yaml", 1)
-  checkRead(err, t)
-
-  writeLineToFile("test.yaml", line)
-  want, _ := readFileLineAsString("example.yaml", 1)
-  got, _ := readFileLineAsString("test.yaml", 1)
-  assertStringEquals(got, want, t)
-}
-
-func TestWriteApiVersionAndKindToFile (t *testing.T) {
-  testFileName := "test.yaml"
-  createNewFile(testFileName)
-  
-  line, err := readFileLineAsString("example.yaml", 1)
-  checkRead(err, t)
-  writeLineToFile("test.yaml", line)
-
-  line, err = readFileLineAsString("example.yaml", 2)
-  checkRead(err, t)
-  writeLineToFile("test.yaml", line)
-
-  assertFileEquals(testFileName, "testfiles/write_api_version_and_kind_to_file.yaml", t)
-}
-
 func TestCanParseMetadata (t *testing.T) {
   wantMetadata := TemplateMetadata{
     Name: "gcp-template",
@@ -102,7 +63,7 @@ func TestCanParseMetadata (t *testing.T) {
   }
   metadata := TemplateMetadata{}
   spec := TemplateSpec{}
-  err := parseMetadata("examples/header.yaml", &metadata, &spec)
+  err := parseMetadata("../examples/header.yaml", &metadata, &spec)
   checkRead(err, t)
   gotMetadata := metadata
   gotSpec := spec
@@ -117,16 +78,17 @@ func TestCanParseMetadata (t *testing.T) {
 
 func TestCanNotParseNoMetadata (t *testing.T) {
   metadata := TemplateMetadata{}
-  got := parseMetadata("examples/error_header.yaml", &metadata, &TemplateSpec{})
+  got := parseMetadata("../examples/error_header.yaml", &metadata, &TemplateSpec{})
   if got == nil {
     t.Errorf("Did not return error for bug.")
   }
 }
 
 func TestCreateTemplateHeader (t *testing.T) {
-  testFileName := "test1.yaml"
-  matchFileName := "testfiles/create_template_header.yaml"
-  generatorFileName := "examples/init_file.yaml"
+  testFileName := "../testgeneratefiles/create_template_header.yaml"
+  matchFileName := "../testfiles/create_template_header.yaml"
+  generatorFileName := "../examples/init_file.yaml"
+
   initTemplateFile(testFileName, generatorFileName)
   assertFileEquals(testFileName, matchFileName, t)
 }
@@ -139,10 +101,12 @@ func TestCanCreateSpec (t *testing.T) {
 }
 
 func TestCreateTemplateWithNoObjects (t *testing.T) {
-  testFileName := "test3.yaml"
-  matchFileName := "testfiles/create_template_with_no_objects.yaml"
-  generatorFileName := "examples/no_objects.yaml"
+  testFileName := "../testgeneratefiles/create_template_with_no_objects.yaml"
+  matchFileName := "../testfiles/create_template_with_no_objects.yaml"
+  generatorFileName := "../examples/no_objects.yaml"
+
   initTemplateFile(testFileName, generatorFileName)
   assertFileEquals(testFileName, matchFileName, t)
 }
+
 

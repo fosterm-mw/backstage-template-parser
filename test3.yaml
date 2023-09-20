@@ -1,8 +1,0 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
-metadata:
-  name: gcp-template
-  title: GCP Template
-  description: Create GCP Resources
-spec:
-  owner: team1
