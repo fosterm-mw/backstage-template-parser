@@ -124,14 +124,11 @@ func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
 }
 
 func parseMetadata(filePath string, metadataPointer *TemplateMetadata, specPointer *TemplateSpec) error {
-  metadata := TemplateMetadata{}
-  spec := TemplateSpec{}
   file := openFile(filePath)
   scanner := bufio.NewScanner(file)
   metadataLineNumber := getObjectLineNumber(scanner, "metadata")
   if metadataLineNumber == -1 {
-    error := errors.New("Cannot parse metadata, object not supplied.")
-    return error
+    return errors.New("Cannot parse metadata, object not supplied.")
   }
   lineNumber := 0
   for scanner.Scan() {
@@ -141,32 +138,38 @@ func parseMetadata(filePath string, metadataPointer *TemplateMetadata, specPoint
       if strings.Contains(currentLine, "spec:"){
         break
       }
-      if strings.Contains(currentLine, "name:"){
-        metadata.Name = strings.Split(currentLine, ": ")[1]
-      }
-      if strings.Contains(currentLine, "title:"){
-        metadata.Title = strings.Split(currentLine, ": ")[1]
-      }
-      if strings.Contains(currentLine, "description:"){
-        metadata.Description = strings.Split(currentLine, ": ")[1]
-      }
-      if strings.Contains(currentLine, "owner:"){
-        spec.Owner = strings.Split(currentLine, ": ")[1]
-      }
-      if strings.Contains(currentLine, "type:"){
-        spec.Type = strings.Split(currentLine, ": ")[1]
-      }
+      setMetadata(currentLine, metadataPointer)
+      setSpec(currentLine, specPointer)
     }
   }
-  if metadata.Name == "" {
-    error := errors.New("Cannot parse metadata, name required.")
-    return error
+
+  if metadataPointer.Name == "" {
+    return errors.New("Cannot parse metadata, name required.")
   }
-  *metadataPointer = metadata
-  *specPointer = spec
 
   defer file.Close()
   return nil
+}
+
+func setMetadata(currentLine string, metadataPointer *TemplateMetadata) {
+  if strings.Contains(currentLine, "name:"){
+    metadataPointer.Name = strings.Split(currentLine, ": ")[1]
+  }
+  if strings.Contains(currentLine, "title:"){
+    metadataPointer.Title = strings.Split(currentLine, ": ")[1]
+  }
+  if strings.Contains(currentLine, "description:"){
+    metadataPointer.Description = strings.Split(currentLine, ": ")[1]
+  }
+}
+
+func setSpec(currentLine string, specPointer *TemplateSpec) {
+  if strings.Contains(currentLine, "owner:"){
+    specPointer.Owner = strings.Split(currentLine, ": ")[1]
+  }
+  if strings.Contains(currentLine, "type:"){
+    specPointer.Type = strings.Split(currentLine, ": ")[1]
+  }
 }
 
 func main() {

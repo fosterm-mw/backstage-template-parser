@@ -62,12 +62,11 @@ func TestCanParseMetadata (t *testing.T) {
     Owner: "team1",
     Type: "resource",
   }
-  metadata := TemplateMetadata{}
-  spec := TemplateSpec{}
-  err := parseMetadata("../examples/header.yaml", &metadata, &spec)
+
+  gotMetadata := TemplateMetadata{}
+  gotSpec := TemplateSpec{}
+  err := parseMetadata("../examples/header.yaml", &gotMetadata, &gotSpec)
   checkRead(err, t)
-  gotMetadata := metadata
-  gotSpec := spec
 
   if gotMetadata != wantMetadata {
     t.Errorf("Got %v, wanted %v", gotMetadata, wantMetadata)
