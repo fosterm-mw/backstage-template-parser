@@ -6,3 +6,4 @@ metadata:
   description: Create GCP Resources
 spec:
   owner: team1
+  type: resource

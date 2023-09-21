@@ -105,6 +105,9 @@ func writeSpec(filePath string, spec TemplateSpec) {
   if spec.Owner != "" {
     writeLineToFile(filePath, fmt.Sprintf("  owner: %v", spec.Owner))
   }
+  if spec.Type != "" {
+    writeLineToFile(filePath, fmt.Sprintf("  type: %v", spec.Type))
+  }
 }
 
 func getObjectLineNumber(scanner *bufio.Scanner, objectName string) int {
@@ -149,6 +152,9 @@ func parseMetadata(filePath string, metadataPointer *TemplateMetadata, specPoint
       }
       if strings.Contains(currentLine, "owner:"){
         spec.Owner = strings.Split(currentLine, ": ")[1]
+      }
+      if strings.Contains(currentLine, "type:"){
+        spec.Type = strings.Split(currentLine, ": ")[1]
       }
     }
   }

@@ -109,4 +109,3 @@ func TestCreateTemplateWithNoObjects (t *testing.T) {
   assertFileEquals(testFileName, matchFileName, t)
 }
 
-

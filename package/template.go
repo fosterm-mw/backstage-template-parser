@@ -10,6 +10,7 @@ type TemplateMetadata struct {
 
 type TemplateSpec struct {
   Owner string
+  Type string
 }
 //
 // type Template struct {
