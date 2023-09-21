@@ -60,6 +60,7 @@ func TestCanParseMetadata (t *testing.T) {
   }
   wantSpec := TemplateSpec{
     Owner: "team1",
+    Type: "resource",
   }
   metadata := TemplateMetadata{}
   spec := TemplateSpec{}
