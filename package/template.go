@@ -11,9 +11,16 @@ type TemplateMetadata struct {
 type TemplateSpec struct {
   Owner string
   Type string
+  Resource *Resource
 }
-//
-// type Template struct {
-//
-// }
+
+type Resource struct {
+  Name string
+  Parameters []Parameter
+  DeletionPolicy string
+}
+
+type Parameter struct {
+
+}
 

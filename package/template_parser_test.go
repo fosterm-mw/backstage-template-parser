@@ -109,3 +109,61 @@ func TestCreateTemplateWithNoObjects (t *testing.T) {
   assertFileEquals(testFileName, matchFileName, t)
 }
 
+func TestCanCreateSpecWithOneObject (t *testing.T) {
+  resource := Resource{}
+  spec := TemplateSpec{
+    Resource: &resource,
+  }
+  if &spec == nil {
+    t.Errorf("Did not create spec struct, %v", spec)
+  }
+}
+
+func TestCanCreateResource (t *testing.T) {
+  var parameters []Parameter
+  parameters = append(parameters, Parameter{})
+  resource := Resource{
+    Name: "bucket",
+    Parameters: parameters,
+    DeletionPolicy: "Delete",
+  }
+  if &resource == nil {
+    t.Errorf("Did not create resource struct, %v", resource)
+  }
+}
+
+func TestCanCreateParameter (t *testing.T){
+  p := Parameter{}
+  if &p == nil {
+    t.Errorf("Did not create parameters struct, %v", p)
+  }
+}
+
+// func TestParseBucketResource (t *testing.T) {
+//   wantResource := Resource{
+//     Name: "bucket",
+//     Parameters: Parameter{},
+//     DeletionPolicy: "Delete",
+//   }
+//   gotResource := Resource{
+//     Name: "bucket",
+//     Parameters: Parameter{},
+//     DeletionPolicy: "Delete",
+//   }
+//   if gotResource != wantResource {
+//     t.Errorf("Got %v, wanted %v", gotResource, wantResource)
+//   }
+// }
+
+func TestParseSpecWithOneObject (t *testing.T) {
+  wantSpec := TemplateSpec{}
+
+  parseFile := "../examples/spec_with_one_object.yaml"
+  gotSpec := TemplateSpec{}
+  parseSpec(parseFile, &gotSpec)
+
+  if gotSpec != wantSpec {
+    t.Errorf("Got %v, wanted %v", gotSpec, wantSpec)
+  }
+}
+

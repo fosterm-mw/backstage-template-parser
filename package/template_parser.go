@@ -151,6 +151,10 @@ func parseMetadata(filePath string, metadataPointer *TemplateMetadata, specPoint
   return nil
 }
 
+func parseSpec(fileName string, specPointer *TemplateSpec) {
+  
+}
+
 func setMetadata(currentLine string, metadataPointer *TemplateMetadata) {
   if strings.Contains(currentLine, "name:"){
     metadataPointer.Name = strings.Split(currentLine, ": ")[1]
